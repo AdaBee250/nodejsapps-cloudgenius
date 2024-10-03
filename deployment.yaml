@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloudgenius-voting-app
+  labels:
+    app: cloudgenius-voting-app
+spec:
+  replicas: 3  # Number of pod replicas
+  selector:
+    matchLabels:
+      app: cloudgenius-voting-app
+  template:
+    metadata:
+      labels:
+        app: cloudgenius-voting-app
+    spec:
+      containers:
+      - name: nodejs-app
+        image: YOUR_ECR_REPO_URI:latest  # Replace with your ECR image URI
+        ports:
+        - containerPort: 3077  # Node.js app listens on port 3077
+        env:
+        - name: NODE_ENV
+          value: "production"  # Example environment variable
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
+        readinessProbe:
+          httpGet:
+            path: "/"
+            port: 3077
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: "/"
+            port: 3077
+          initialDelaySeconds: 15
+          periodSeconds: 20
