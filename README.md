@@ -68,7 +68,15 @@ source /etc/profile.d/maven.sh
 
 # SonarQube
 
+docker run -d --name sonar -p 9000:9000 sonarqube:lts-community
+
+![alt text](image-4.png)
+
 ![alt text](image.png)
 
 ![alt text](image-1.png)
+
+![alt text](image-2.png)
+
+![alt text](image-3.png)
 
