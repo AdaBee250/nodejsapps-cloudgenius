@@ -120,9 +120,7 @@ pipeline {
 
     post {
         always {
-            node {
-                cleanWs() // Ensure cleanup happens in a node context
-            }
+            cleanWs() // Cleanup workspace always
         }
         success {
             echo 'Pipeline completed successfully!'
