@@ -4,63 +4,57 @@ docker build -t ooo:latest
 
 docker run -d -p 3077:3077 --name container sss
 
-
-
+-------------------
 
 #!/bin/bash
 
-Install Docker
-
+#Update packages
 sudo yum update -y
-sudo yum install -y docker.io
 
-Create the docker group if it doesn't exist
+#Install Java 17 Amazon Corretto
+sudo dnf install java-17-amazon-corretto-devel -y
 
-sudo groupadd docker || true
+#Install EPEL repository
+sudo amazon-linux-extras install epel -y
 
-Add the jenkins user to the docker group
-sudo usermod -aG docker jenkins
-
-Restart Jenkins to apply group changes
-sudo systemctl restart jenkins
-
-
-
-
-
-----------------------------------------------------------------
-
-#!/bin/bash
-
-Update packages
-yum update -y
-
-Install Java 17
-sudo yum install java17
-
-Install EPEL repository
-amazon-linux-extras install epel -y
-
-Install Jenkins
+#Install Jenkins
 sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
 sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
-yum install jenkins -y
+sudo yum install jenkins -y
 
-Start and enable Jenkins
-systemctl start jenkins
-systemctl enable jenkins
+#Start and enable Jenkins
+sudo systemctl start jenkins
+sudo systemctl enable jenkins
 
-Install Git
-yum install git -y
+#Install Git
+sudo yum install git -y
 
-Install Docker
-yum install docker -y
-systemctl start docker
-systemctl enable docker
+#Install Docker
+sudo yum install docker -y
+sudo systemctl start docker
+sudo systemctl enable docker
 
-Add Jenkins user to Docker group
-usermod -aG docker jenkins
+#Create a group called 'docker'
+sudo groupadd docker
 
+#Create a user called 'jenkins' if it does not already exist
+if ! id "jenkins" &>/dev/null; then
+    sudo useradd -m jenkins
+fi
+
+#Add the user 'jenkins' to the 'docker' group
+sudo usermod -aG docker jenkins
+
+#Restart the Docker service
+sudo systemctl restart docker
+
+#Restart Jenkins
+sudo systemctl restart jenkins
+
+#Output a message for confirmation
+echo "Java 17 installed, Docker group created, user 'jenkins' added to it, and Jenkins has been restarted."
+
+-------------------
 Install Docker Compose
 yum install -y curl
 curl -SL https://github.com/docker/compose/releases/download/v2.25.0/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
