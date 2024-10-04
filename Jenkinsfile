@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         SCANNER_HOME = tool 'sonar' // Use the configured SonarQube Scanner
-        NODE_HOME = tool name: 'nodejs', type: 'NodeJSInstallation'
+        NODE_HOME = tool name: 'nodejs', type: 'NodeJSInstallation' // Make sure 'nodejs' matches your configuration
         REPO_URL = 'https://github.com/CloudGeniuses/nodejsapps-cloudgenius.git'
         BRANCH_NAME = 'main'
         DOCKER_IMAGE = 'cloudgeniuslab/cloudgeniusvotinappnodejs'
@@ -20,10 +20,18 @@ pipeline {
             }
         }
 
+        stage('Check Node Version') {
+            steps {
+                script {
+                    def nodeCmd = "${NODE_HOME}/bin/node" // Path to Node executable
+                    sh "${nodeCmd} -v" // Check Node version
+                }
+            }
+        }
+
         stage('Install Dependencies') {
             steps {
                 script {
-                    // Ensure package.json exists before installing
                     if (fileExists('package.json')) {
                         def npmCmd = "${NODE_HOME}/bin/npm"
                         sh "${npmCmd} install"
@@ -37,10 +45,8 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
-                    // Check if tests are defined in package.json and run them
                     def npmCmd = "${NODE_HOME}/bin/npm"
                     if (fileExists('package.json')) {
-                        // Run tests
                         if (sh(script: "${npmCmd} run test", returnStatus: true) != 0) {
                             error 'Tests failed.'
                         } else {
@@ -56,10 +62,8 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    // Ensure build script is defined in package.json
                     def npmCmd = "${NODE_HOME}/bin/npm"
                     if (fileExists('package.json')) {
-                        // Run build process
                         if (sh(script: "${npmCmd} run build", returnStatus: true) != 0) {
                             error 'Build failed.'
                         } else {
@@ -75,7 +79,6 @@ pipeline {
         stage('Check for app.js') {
             steps {
                 script {
-                    // Ensure app.js exists
                     if (!fileExists('app.js')) {
                         error 'app.js not found. This file is crucial for the application.'
                     } else {
@@ -91,8 +94,8 @@ pipeline {
             }
             steps {
                 script {
-                    def scannerHome = tool 'sonar' // Using the correct tool name
-                    env.PATH = "${scannerHome}/bin:${env.PATH}" // Ensure the scanner is in the PATH
+                    def scannerHome = tool 'sonar'
+                    env.PATH = "${scannerHome}/bin:${env.PATH}"
 
                     withCredentials([string(credentialsId: 'sonartoken', variable: 'SONAR_TOKEN')]) {
                         sh """
@@ -110,21 +113,22 @@ pipeline {
 
         stage('Archive Artifacts') {
             steps {
-                // Archive the built application or artifacts
                 archiveArtifacts artifacts: 'public/**', fingerprint: true // Adjust based on output location
             }
         }
     }
 
     post {
+        always {
+            script {
+                cleanWs() // Ensure cleanup happens in a node context
+            }
+        }
         success {
             echo 'Pipeline completed successfully!'
         }
         failure {
             echo 'Pipeline failed!'
-        }
-        always {
-            cleanWs()
         }
     }
 }
