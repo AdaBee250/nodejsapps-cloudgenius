@@ -33,6 +33,7 @@ pipeline {
             steps {
                 script {
                     if (fileExists('package.json')) {
+                        env.PATH = "${NODE_HOME}/bin:${env.PATH}" // Ensure PATH includes Node.js binaries
                         def npmCmd = "${NODE_HOME}/bin/npm"
                         sh "${npmCmd} install"
                     } else {
