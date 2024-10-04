@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         SCANNER_HOME = tool 'sonar' // Use the configured SonarQube Scanner
-        NODE_HOME = tool name: 'NodeJS 22.9.0' // Updated to use the specified NodeJS version
+        NODE_HOME = tool name: 'NodeJS 14.21.3' // Updated to use Node.js 14.21.3
         REPO_URL = 'https://github.com/CloudGeniuses/nodejsapps-cloudgenius.git'
         BRANCH_NAME = 'main'
         DOCKER_IMAGE = 'cloudgeniuslab/cloudgeniusvotinappnodejs'
