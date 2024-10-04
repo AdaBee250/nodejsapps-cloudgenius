@@ -1,15 +1,13 @@
 {
-  "name": "my-awesome-app", // Replace with your application name
-  "version": "1.0.0-alpha",
-  "main": "app.js",
+  "name": "your-app-name", // Replace with your application name
+  "version": "1.0.0",
+  "main": "app.js", // Replace with your main file if different
   "dependencies": {
     "ejs": "^3.1.10",
     "express": "^4.21.0"
   },
   "scripts": {
-    "start": "node app.js",
-    "dev": "nodemon app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "license": "MIT"
+    "start": "node app.js", // Command to start your application
+    "test": "echo \"Error: no test specified\" && exit 1" // Placeholder for tests
+  }
 }
