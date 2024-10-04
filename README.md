@@ -5,7 +5,6 @@ docker build -t ooo:latest
 docker run -d -p 3077:3077 --name container sss
 
 -------------------
-
 #!/bin/bash
 
 #Update packages
@@ -34,8 +33,10 @@ sudo yum install docker -y
 sudo systemctl start docker
 sudo systemctl enable docker
 
-#Create a group called 'docker'
-sudo groupadd docker
+#Create a group called 'docker' if it does not already exist
+if ! getent group docker >/dev/null; then
+    sudo groupadd docker
+fi
 
 #Create a user called 'jenkins' if it does not already exist
 if ! id "jenkins" &>/dev/null; then
@@ -50,6 +51,15 @@ sudo systemctl restart docker
 
 #Restart Jenkins
 sudo systemctl restart jenkins
+
+#Run SonarQube Docker container
+sudo docker run -d --name sonar -p 9000:9000 sonarqube:lts-community
+
+#Output a message for confirmation
+echo "Java 17 installed, Docker group created, user 'jenkins' added to it, Jenkins has been restarted, and SonarQube container is running."
+
+
+-------------------
 
 #Output a message for confirmation
 echo "Java 17 installed, Docker group created, user 'jenkins' added to it, and Jenkins has been restarted."
