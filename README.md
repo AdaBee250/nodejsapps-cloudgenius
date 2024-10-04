@@ -8,11 +8,14 @@ docker run -d -p 3077:3077 --name container sss
 
 
 #!/bin/bash
+
 Install Docker
-sudo apt-get update
-sudo apt-get install -y docker.io
+
+sudo yum update -y
+sudo yum install -y docker.io
 
 Create the docker group if it doesn't exist
+
 sudo groupadd docker || true
 
 Add the jenkins user to the docker group
