@@ -1,11 +1,8 @@
 pipeline {
-    agent {
-        docker {
-            image 'sonarsource/sonar-scanner-cli:latest' // SonarQube scanner image
-        }
-    }
+    agent any // Use any available agent
 
     environment {
+        SCANNER_HOME = tool 'sonar-scanner'
         REPO_URL = 'https://github.com/CloudGeniuses/nodejsapps-cloudgenius.git'
         BRANCH_NAME = 'main'
         DOCKER_IMAGE = 'cloudgeniuslab/cloudgeniusvotinappnodejs'
