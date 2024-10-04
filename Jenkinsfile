@@ -2,7 +2,7 @@ pipeline {
     agent any // Use any available agent
 
     environment {
-        SCANNER_HOME = tool 'sonar'
+        SCANNER_HOME = tool 'sonar' // Use the configured SonarQube Scanner
         REPO_URL = 'https://github.com/CloudGeniuses/nodejsapps-cloudgenius.git'
         BRANCH_NAME = 'main'
         DOCKER_IMAGE = 'cloudgeniuslab/cloudgeniusvotinappnodejs'
@@ -25,7 +25,7 @@ pipeline {
             }
             steps {
                 script {
-                    def scannerHome = tool 'Sonar' // Use the exact name from your Jenkins configuration
+                    def scannerHome = tool 'sonar' // Using the correct tool name
                     env.PATH = "${scannerHome}/bin:${env.PATH}" // Ensure the scanner is in the PATH
 
                     withCredentials([string(credentialsId: 'sonartoken', variable: 'SONAR_TOKEN')]) {
