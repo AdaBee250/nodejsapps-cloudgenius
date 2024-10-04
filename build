@@ -1,0 +1,97 @@
+pipeline {
+    agent any
+
+    environment {
+        NODE_HOME = tool name: 'nodejs', type: 'NodeJSInstallation'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // Check out the code from the repository
+                git 'https://github.com/your-repo/your-node-app.git'
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                script {
+                    // Ensure package.json exists before installing
+                    if (fileExists('package.json')) {
+                        def npmCmd = "${NODE_HOME}/bin/npm"
+                        sh "${npmCmd} install"
+                    } else {
+                        error 'package.json not found. Cannot install dependencies.'
+                    }
+                }
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                script {
+                    // Check if tests are defined in package.json and run them
+                    def npmCmd = "${NODE_HOME}/bin/npm"
+                    if (fileExists('package.json')) {
+                        // Run tests
+                        if (sh(script: "${npmCmd} run test", returnStatus: true) != 0) {
+                            error 'Tests failed.'
+                        } else {
+                            echo 'Tests passed.'
+                        }
+                    } else {
+                        error 'package.json not found. Cannot run tests.'
+                    }
+                }
+            }
+        }
+
+        stage('Build') {
+            steps {
+                script {
+                    // Ensure build script is defined in package.json
+                    def npmCmd = "${NODE_HOME}/bin/npm"
+                    if (fileExists('package.json')) {
+                        // Run build process
+                        if (sh(script: "${npmCmd} run build", returnStatus: true) != 0) {
+                            error 'Build failed.'
+                        } else {
+                            echo 'Build completed successfully.'
+                        }
+                    } else {
+                        error 'package.json not found. Cannot build the application.'
+                    }
+                }
+            }
+        }
+
+        stage('Check for app.js') {
+            steps {
+                script {
+                    // Ensure app.js exists
+                    if (!fileExists('app.js')) {
+                        error 'app.js not found. This file is crucial for the application.'
+                    } else {
+                        echo 'app.js exists.'
+                    }
+                }
+            }
+        }
+
+        stage('Archive Artifacts') {
+            steps {
+                // Archive the built application or artifacts
+                archiveArtifacts artifacts: 'public/**', fingerprint: true // Adjust based on output location
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed!'
+        }
+    }
+}
