@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "build": "mkdir -p build && cp -R * build/ && echo 'Build complete!'", // Simple copy to build directory
+    "prepare": "npm run build"
   },
   "dependencies": {
     "ejs": "^3.1.10",
