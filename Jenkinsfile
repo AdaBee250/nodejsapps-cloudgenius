@@ -25,7 +25,7 @@ pipeline {
             }
             steps {
                 script {
-                    def scannerHome = tool 'Sonar Update Script' // Use the exact name from your Jenkins configuration
+                    def scannerHome = tool 'Sonar' // Use the exact name from your Jenkins configuration
                     env.PATH = "${scannerHome}/bin:${env.PATH}" // Ensure the scanner is in the PATH
 
                     withCredentials([string(credentialsId: 'sonartoken', variable: 'SONAR_TOKEN')]) {
