@@ -6,7 +6,7 @@ pipeline {
         NODE_HOME = tool name: 'NodeJS 14.21.3' // Use Node.js 14.21.3
         REPO_URL = 'https://github.com/CloudGeniuses/nodejsapps-cloudgenius.git'
         BRANCH_NAME = 'main'
-        DOCKER_IMAGE = 'cloudgeniuslab/cloudgeniusvotinappnodejs'
+        DOCKER_IMAGE = 'cloudgeniusvoteapp:latest' // Updated image name
         AWS_REGION = 'us-east-2'
         SONARQUBE_SERVER = 'http://3.143.213.50:9000'
         SONARQUBE_PROJECT_KEY = 'project'
@@ -108,6 +108,15 @@ pipeline {
                             -Dsonar.sources=.
                         """
                     }
+                }
+            }
+        }
+
+        stage('Docker Build and Push') {
+            steps {
+                script {
+                    // Build and push the Docker image
+                    docker.build("${DOCKER_IMAGE}").push()
                 }
             }
         }
