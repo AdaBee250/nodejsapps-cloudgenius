@@ -1,0 +1,95 @@
+pipeline {
+    agent any
+
+    environment {
+        GIT_REPO = 'https://github.com/your-repo.git'
+        DOCKER_IMAGE = 'your-docker-image'
+        AWS_REGION = 'us-west-2'
+        ECR_URI = "your-aws-account-id.dkr.ecr.${AWS_REGION}.amazonaws.com/${DOCKER_IMAGE}"
+        K8S_DEPLOYMENT = 'your-k8s-deployment'
+        SONARQUBE_SERVER = 'http://sonarqube-server'
+        SONARQUBE_PROJECT_KEY = 'your-project-key'
+        SONARQUBE_TOKEN = credentials('sonarqube-token')
+        AWS_CREDENTIALS = credentials('aws-credentials')
+    }
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                git url: GIT_REPO, branch: 'main'
+            }
+        }
+
+        stage('Static Code Analysis') {
+            steps {
+                script {
+                    withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_TOKEN')]) {
+                        sh """
+                        sonar-scanner \
+                            -Dsonar.projectKey=${SONARQUBE_PROJECT_KEY} \
+                            -Dsonar.host.url=${SONARQUBE_SERVER} \
+                            -Dsonar.login=\${SONAR_TOKEN}
+                        """
+                    }
+                }
+            }
+        }
+
+        stage('Build & Test') {
+            parallel {
+                stage('Build Docker Image') {
+                    steps {
+                        script {
+                            withCredentials([AWS_CREDENTIALS]) {
+                                sh """
+                                aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_URI}
+                                docker build -t ${DOCKER_IMAGE} .
+                                docker tag ${DOCKER_IMAGE}:latest ${ECR_URI}:latest
+                                """
+                            }
+                        }
+                    }
+                }
+                stage('Run Tests') {
+                    steps {
+                        sh 'npm install && npm test'
+                    }
+                }
+            }
+        }
+
+        stage('Push Docker Image to ECR') {
+            steps {
+                script {
+                    sh "docker push ${ECR_URI}:latest"
+                }
+            }
+        }
+
+        stage('Deploy to EKS') {
+            steps {
+                script {
+                    withCredentials([AWS_CREDENTIALS]) {
+                        sh """
+                        aws eks --region ${AWS_REGION} update-kubeconfig --name your-cluster-name
+                        kubectl set image deployment/${K8S_DEPLOYMENT} ${K8S_DEPLOYMENT}=${ECR_URI}:latest
+                        kubectl rollout status deployment/${K8S_DEPLOYMENT}
+                        """
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Deployment completed successfully!'
+        }
+        failure {
+            echo 'Deployment failed. Check the logs!'
+        }
+        always {
+            cleanWs() // Clean workspace after the build to prevent clutter
+        }
+    }
+}
