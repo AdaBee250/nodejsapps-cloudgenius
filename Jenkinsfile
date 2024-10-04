@@ -7,11 +7,9 @@ pipeline {
         BRANCH_NAME = 'main'
         DOCKER_IMAGE = 'cloudgeniuslab/cloudgeniusvotinappnodejs'
         AWS_REGION = 'us-east-2'
-        //ECR_URI = '211125403425.dkr.ecr.us-east-2.amazonaws.com/cloudgenius'
         SONARQUBE_SERVER = 'http://3.143.213.50:9000'
         SONARQUBE_PROJECT_KEY = 'project'
         SONARQUBE_TOKEN = credentials('sonartoken')
-        //AWS_CREDENTIALS = credentials('aws-cred')
     }
 
     stages {
@@ -27,6 +25,9 @@ pipeline {
             }
             steps {
                 script {
+                    def scannerHome = tool 'Sonar Update Script' // Use the exact name from your Jenkins configuration
+                    env.PATH = "${scannerHome}/bin:${env.PATH}" // Ensure the scanner is in the PATH
+
                     withCredentials([string(credentialsId: 'sonartoken', variable: 'SONAR_TOKEN')]) {
                         sh """
                         sonar-scanner \
