@@ -1,10 +1,9 @@
 {
+  "name": "nodejsapps",
   "version": "1.0.0",
-  "description": "A simple Node.js application using Express and EJS", // Optional description
-  "main": "app.js", // The entry point of your application
+  "main": "app.js",
   "scripts": {
-    "start": "node app.js", // Command to start your application
-    "test": "echo \"Error: no test specified\" && exit 1" // Placeholder for tests
+    "start": "node app.js"
   },
   "dependencies": {
     "ejs": "^3.1.10",
