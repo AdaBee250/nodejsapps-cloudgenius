@@ -4,7 +4,7 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "build": "if [ ! -d build ]; then mkdir build && cp -R * build/ && echo 'Build complete!'; else echo 'Build directory already exists, skipping creation.'; fi",
+    "build": "rm -rf build && mkdir build && cp -R * build/ && echo 'Build complete!'",
     "prepare": "npm run build"
   },
   "dependencies": {
