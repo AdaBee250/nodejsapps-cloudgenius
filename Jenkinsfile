@@ -7,11 +7,11 @@ pipeline {
         BRANCH_NAME = 'main'
         DOCKER_IMAGE = 'cloudgeniuslab/cloudgeniusvotinappnodejs'
         AWS_REGION = 'us-east-2'
-        ECR_URI = '211125403425.dkr.ecr.us-east-2.amazonaws.com/cloudgenius'
+        //ECR_URI = '211125403425.dkr.ecr.us-east-2.amazonaws.com/cloudgenius'
         SONARQUBE_SERVER = 'http://3.143.213.50:9000'
         SONARQUBE_PROJECT_KEY = 'project'
         SONARQUBE_TOKEN = credentials('sonartoken')
-        AWS_CREDENTIALS = credentials('aws-cred')
+        //AWS_CREDENTIALS = credentials('aws-cred')
     }
 
     stages {
