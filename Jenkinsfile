@@ -115,16 +115,10 @@ pipeline {
         stage('Docker Build and Push') {
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: 'dockertoken', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                        // Log in to Docker
-                        sh """
-                        echo "Logging in to Docker..."
-                        docker login -u \$DOCKER_USERNAME -p \$DOCKER_PASSWORD
+                    // Use docker.withRegistry for cleaner authentication
+                    docker.withRegistry('https://index.docker.io/v1/', 'dockertoken') {
                         echo "Building Docker image..."
-                        docker build -t ${DOCKER_IMAGE} .
-                        echo "Pushing Docker image..."
-                        docker push ${DOCKER_IMAGE}
-                        """
+                        docker.build("${DOCKER_IMAGE}").push()
                     }
                 }
             }
