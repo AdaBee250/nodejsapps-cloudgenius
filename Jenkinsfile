@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         SCANNER_HOME = tool 'sonar' // Use the configured SonarQube Scanner
-        NODE_HOME = tool name: 'NodeJS 14.21.3' // Updated to use Node.js 14.21.3
+        NODE_HOME = tool name: 'NodeJS 14.21.3' // Use Node.js 14.21.3
         REPO_URL = 'https://github.com/CloudGeniuses/nodejsapps-cloudgenius.git'
         BRANCH_NAME = 'main'
         DOCKER_IMAGE = 'cloudgeniuslab/cloudgeniusvotinappnodejs'
@@ -23,7 +23,7 @@ pipeline {
         stage('Check Node Version') {
             steps {
                 script {
-                    def nodeCmd = "${NODE_HOME}/bin/node" // Path to Node executable
+                    def nodeCmd = "${NODE_HOME}/bin/node"
                     sh "${nodeCmd} -v" // Check Node version
                 }
             }
@@ -33,7 +33,7 @@ pipeline {
             steps {
                 script {
                     if (fileExists('package.json')) {
-                        env.PATH = "${NODE_HOME}/bin:${env.PATH}" // Ensure PATH includes Node.js binaries
+                        env.PATH = "${NODE_HOME}/bin:${env.PATH}"
                         def npmCmd = "${NODE_HOME}/bin/npm"
                         sh "${npmCmd} install"
                     } else {
@@ -95,8 +95,8 @@ pipeline {
             }
             steps {
                 script {
-                    def scannerHome = tool 'sonar' // Using the correct tool name
-                    env.PATH = "${scannerHome}/bin:${env.PATH}" // Ensure the scanner is in the PATH
+                    def scannerHome = tool 'sonar'
+                    env.PATH = "${scannerHome}/bin:${env.PATH}"
 
                     withCredentials([string(credentialsId: 'sonartoken', variable: 'SONAR_TOKEN')]) {
                         sh """
