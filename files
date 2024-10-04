@@ -1,6 +1,6 @@
 docker run -d --name sonar -p 9000:9000 sonarqube:lts-community
 
-
+sudo yum install java-17-amazon-corretto
 
 docker run -d --name nexus -p 8081:8081 sonatype/nexus3:latest
 
