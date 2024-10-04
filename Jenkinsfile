@@ -1,12 +1,12 @@
 pipeline {
-    agent any // Use any available agent
+    agent any 
 
     environment {
-        SCANNER_HOME = tool 'sonar' // Use the configured SonarQube Scanner
-        NODE_HOME = tool name: 'NodeJS 14.21.3' // Use Node.js 14.21.3
+        SCANNER_HOME = tool 'sonar' 
+        NODE_HOME = tool name: 'NodeJS 14.21.3' 
         REPO_URL = 'https://github.com/CloudGeniuses/nodejsapps-cloudgenius.git'
         BRANCH_NAME = 'main'
-        DOCKER_IMAGE = 'cloudgeniusvoteapp:latest' // Updated image name
+        DOCKER_IMAGE = 'cloudgeniuslab/cloudgeniusvotinappnodejs:latest'
         AWS_REGION = 'us-east-2'
         SONARQUBE_SERVER = 'http://3.143.213.50:9000'
         SONARQUBE_PROJECT_KEY = 'project'
@@ -115,8 +115,17 @@ pipeline {
         stage('Docker Build and Push') {
             steps {
                 script {
-                    // Build and push the Docker image
-                    docker.build("${DOCKER_IMAGE}").push()
+                    withCredentials([usernamePassword(credentialsId: 'dockertoken', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        // Log in to Docker
+                        sh """
+                        echo "Logging in to Docker..."
+                        docker login -u \$DOCKER_USERNAME -p \$DOCKER_PASSWORD
+                        echo "Building Docker image..."
+                        docker build -t ${DOCKER_IMAGE} .
+                        echo "Pushing Docker image..."
+                        docker push ${DOCKER_IMAGE}
+                        """
+                    }
                 }
             }
         }
