@@ -4,9 +4,23 @@ docker build -t ooo:latest
 
 docker run -d -p 3077:3077 --name container sss
 
+
+
+
+#!/bin/bash
+# Install Docker
+sudo apt-get update
+sudo apt-get install -y docker.io
+
+# Create the docker group if it doesn't exist
+sudo groupadd docker || true
+
+# Add the jenkins user to the docker group
 sudo usermod -aG docker jenkins
 
+# Restart Jenkins to apply group changes
 sudo systemctl restart jenkins
+
 
 
 
