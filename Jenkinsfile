@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         SCANNER_HOME = tool 'sonar' // Use the configured SonarQube Scanner
-        NODE_HOME = tool name: 'nodejs', type: 'NodeJSInstallation' // Make sure 'nodejs' matches your configuration
+        NODE_HOME = tool name: 'NodeJS 22.9.0' // Updated to use the specified NodeJS version
         REPO_URL = 'https://github.com/CloudGeniuses/nodejsapps-cloudgenius.git'
         BRANCH_NAME = 'main'
         DOCKER_IMAGE = 'cloudgeniuslab/cloudgeniusvotinappnodejs'
@@ -94,8 +94,8 @@ pipeline {
             }
             steps {
                 script {
-                    def scannerHome = tool 'sonar'
-                    env.PATH = "${scannerHome}/bin:${env.PATH}"
+                    def scannerHome = tool 'sonar' // Using the correct tool name
+                    env.PATH = "${scannerHome}/bin:${env.PATH}" // Ensure the scanner is in the PATH
 
                     withCredentials([string(credentialsId: 'sonartoken', variable: 'SONAR_TOKEN')]) {
                         sh """
@@ -120,7 +120,7 @@ pipeline {
 
     post {
         always {
-            script {
+            node {
                 cleanWs() // Ensure cleanup happens in a node context
             }
         }
