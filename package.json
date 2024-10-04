@@ -4,7 +4,7 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "build": "mkdir -p build && cp -R * build/ && echo 'Build complete!'",
+    "build": "if [ ! -d build ]; then mkdir build; fi && cp -R * build/ && echo 'Build complete!'",
     "prepare": "npm run build"
   },
   "dependencies": {
