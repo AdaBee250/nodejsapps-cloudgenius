@@ -1,13 +1,13 @@
 {
-  "name": "your-app-name", // Replace with your application name
   "version": "1.0.0",
-  "main": "app.js", // Replace with your main file if different
-  "dependencies": {
-    "ejs": "^3.1.10",
-    "express": "^4.21.0"
-  },
+  "description": "A simple Node.js application using Express and EJS", // Optional description
+  "main": "app.js", // The entry point of your application
   "scripts": {
     "start": "node app.js", // Command to start your application
     "test": "echo \"Error: no test specified\" && exit 1" // Placeholder for tests
+  },
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^4.21.0"
   }
 }
