@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        REPO_URL = 'https://github.com/CloudGeniuses/nodejsapps-cloudgenius.git'
+        REPO_URL = 'https://github.com/AdaBee250/nodejsapps-cloudgenius.git'
         BRANCH_NAME = 'main' // Change if you need a different branch
     }
     stages {
